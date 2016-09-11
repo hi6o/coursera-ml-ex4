@@ -94,6 +94,64 @@ endfor;
 J = J + (lambda / (2 * m)) * ((vec(Theta1(:,2:end))' * vec(Theta1(:,2:end))) + vec(Theta2(:,2:end))' * vec(Theta2(:,2:end)));
 
 
+d_1 = 0;
+d_2 = 0;
+
+% Part 7
+for t = 1:m;
+
+  % 1
+  a_1 = X(t,:);
+  a_1 = [1 a_1];
+
+  z_2 = a_1 * Theta1';
+
+  a_2 = sigmoid(z_2);
+  a_2 = [1 a_2];
+
+  z_3 = a_2 * Theta2';
+
+  a_3 = sigmoid(z_3);
+
+  % yの変形
+
+  y_temp = zeros(1,max(y));
+  y_temp(1,y(t)) = 1;
+
+
+  % 2
+  delta_3 = a_3 - y_temp;
+
+  % 3
+  z_2 = [1 z_2];
+  %delta_2 = (Theta2' * delta_3') .* sigmoidGradient(z_2);
+  delta_2 = (delta_3 * Theta2) .* sigmoidGradient(z_2) ;
+
+  % 4
+  delta_2 = delta_2(:,2:end);
+  d_1 = d_1 + delta_2' * a_1;
+  d_2 = d_2 + delta_3' * a_2;
+
+endfor
+
+% 5
+
+Theta1_grad = (1 / m) * d_1 + (lambda / m) * [zeros(size(Theta1,1),1) Theta1(:,2:end)];
+Theta2_grad = (1 / m) * d_2 + (lambda / m) * [zeros(size(Theta2,1),1) Theta2(:,2:end)];
+
+% サイズを調べる用
+%size(Theta1) % 25 * 401
+%size(Theta2) % 10 * 26
+%size(delta_2) % 1 * 649
+%size(delta_3) % 1* 10
+%size(z_2) % 1 * 25
+%size(Theta1_grad) % 25 * 401
+%size(Theta2_grad) % 10 * 26
+
+
+
+
+
 
 % -------------------------------------------------------------
 
